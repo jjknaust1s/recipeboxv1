@@ -1,0 +1,4 @@
+<h1>{{detail.title}} <a href="/author/{{detail.author.id}}/">{{detail.author}}</a></h1>
+{% for item in recipe%}
+<p>{{item.instructions}}</p>
+{% endfor %}
