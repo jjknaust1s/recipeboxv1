@@ -1,4 +1,6 @@
 <ul>
+<button><a href="/addrecipe/">AddRecipe</a></button>
+<button><a href="/addauthor/">AddAuthor</a></button>
 {% for item in recipe %}
 <h4><a href="/recipes/{{item.id}}">{{item.title}}</a></h4>
 {% endfor %}
