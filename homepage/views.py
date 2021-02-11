@@ -77,7 +77,6 @@ def add_recipe(request):
 
 
 @login_required
-@staff_member_required
 def add_author(request):
     if request.method == 'POST':
         form = AddAuthorForm(request.POST)
@@ -92,7 +91,7 @@ def add_author(request):
         return HttpResponseRedirect(reverse('homepage'))
 
     form = AddAuthorForm()
-    return render(request, 'generic_form.html', {'form': form})
+    return render(request, 'add_author.html', {'form': form})
 
 
 def signup_view(request):

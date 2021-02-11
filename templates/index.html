@@ -2,6 +2,7 @@
 <h2>Profile Name: {{request.user.username}}</h2>
 <button><a href="/addrecipe/">AddRecipe</a></button>
 <button><a href="/addauthor/">AddAuthor</a></button>
+<button><a href="/login/">Login</a></button>
 <button><a href="/logout/">Logout</a></button>
 {% for item in recipe %}
 <h4><a href="/recipes/{{item.id}}">{{item.title}}</a></h4>
