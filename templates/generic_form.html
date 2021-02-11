@@ -1,6 +1,7 @@
-{% if message %}
-    <h1>{{message}}</h1>
-{% endif %}
+<button><a href="/addrecipe/">AddRecipe</a></button>
+<button><a href="/addauthor/">AddAuthor</a></button>
+<button><a href="/">Homepage</a></button>
+<button><a href="/logout/">logout</a></button>
 <form action='' method="post">
     {% csrf_token %}
     {{form.as_p}}

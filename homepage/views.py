@@ -1,13 +1,40 @@
 from django.shortcuts import render, HttpResponseRedirect, reverse
-
+from django.contrib.auth.models import User
+from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 from homepage.models import Author, Recipe
-from homepage.forms import AddRecipeForm, AddAuthorForm
+from homepage.forms import AddRecipeForm, AddAuthorForm, SignupForm, LoginForm
 
 
 # Create your views here.
 def index(request):
     recipe = Recipe.objects.all()
     return render(request, 'index.html', {'recipe': recipe})
+
+
+def login_view(request):
+    if request.method == "POST":
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            user = authenticate(request,
+                                username=data["username"],
+                                password=data['password'])
+            if user:
+                login(request, user)
+
+            return HttpResponseRedirect(request.GET.get('next',
+                                                        reverse('homepage')))
+
+    form = LoginForm()
+    return render(request, 'generic_form.html', {'form': form})
+
+
+def logout_view(request):
+    logout(request)
+
+    return HttpResponseRedirect(reverse('homepage'))
 
 
 def recipe_detail(request, post_id):
@@ -28,6 +55,7 @@ def author_detail(request, author_id):
         })
 
 
+@login_required
 def add_recipe(request):
     context = {}
     if request.method == "POST":
@@ -36,7 +64,7 @@ def add_recipe(request):
             data = form.cleaned_data
             new_recipe = Recipe.objects.create(
                 title=data['title'],
-                author=data['author'],
+                author=request.user.author,
                 description=data['description'],
                 instructions=data['instructions']
             )
@@ -48,11 +76,41 @@ def add_recipe(request):
     return render(request, 'generic_form.html', context)
 
 
+@login_required
+@staff_member_required
 def add_author(request):
     if request.method == 'POST':
         form = AddAuthorForm(request.POST)
-        form.save()
+    if request.method == "POST":
+        form = AddRecipeForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            Author.objects.create(
+                author=request.user.author,
+                byline=data['byline']
+            )
         return HttpResponseRedirect(reverse('homepage'))
 
     form = AddAuthorForm()
+    return render(request, 'generic_form.html', {'form': form})
+
+
+def signup_view(request):
+    if request.method == "POST":
+        form = SignupForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            new_user = User.objects.create_user(
+                username=data['username'],
+                password=data['password']
+
+            )
+            Author.objects.create(
+                name=data['name'],
+                bio=data['bio'],
+                user=new_user
+            )
+            return HttpResponseRedirect(reverse('homepage'))
+
+    form = SignupForm()
     return render(request, 'generic_form.html', {'form': form})

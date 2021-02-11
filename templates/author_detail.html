@@ -1,4 +1,8 @@
 <h1>{{author.name}}</h1>
+<button><a href="/addrecipe/">AddRecipe</a></button>
+<button><a href="/addauthor/">AddAuthor</a></button>
+<button><a href="/">Homepage</a></button>
+<button><a href="/logout/">logout</a></button>
 <ul>
 {% for item in recipes %}
     <li><a href="/recipes/{{item.id}}">{{item.title}}</a></li>
