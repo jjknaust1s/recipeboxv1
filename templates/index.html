@@ -1,7 +1,18 @@
 <ul>
+<h2>Profile Name: {{request.user.username}}</h2>
 <button><a href="/addrecipe/">AddRecipe</a></button>
 <button><a href="/addauthor/">AddAuthor</a></button>
+<button><a href="/login/">Login</a></button>
+<button><a href="/logout/">Logout</a></button>
 {% for item in recipe %}
-<h4><a href="/recipes/{{item.id}}">{{item.title}}</a></h4>
+    <h4><a href="/recipes/{{item.id}}">{{item.title}}</a></h4>
+        {% if request.user.is_staff %}
+        <h4><a href="/editrecipe/{{ item.id }}">Edit Recipe</a></h4>
+        {% elif request.user.is_authenticated and request.user.author == item.author %}
+            <h4><a href="/editrecipe/{{ item.id }}">Edit Recipe</a></h4>
+        {% endif %}
+        {% if request.user.is_authenticated %}
+            <h4><button><a href="/favorite/{{ item.id }}">Favorite</a></button></h4>
+        {% endif %}
 {% endfor %}
 </ul>

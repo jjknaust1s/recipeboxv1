@@ -1,4 +1,11 @@
+<button><a href="/addrecipe/">AddRecipe</a></button>
+<button><a href="/addauthor/">AddAuthor</a></button>
+<button><a href="/">Homepage</a></button>
+<button><a href="/logout/">logout</a></button>
 <h1>{{detail.title}} <a href="/author/{{detail.author.id}}/">{{detail.author}}</a></h1>
 {% for item in recipe%}
-<p>{{item.instructions}}</p>
+    <p>{{item.instructions}}</p>
+{% if request.user.is_authenticated %}
+     <h4><button><a href="/favorite/{{ item.id }}">Favorite</a></button></h4>
+{% endif %}
 {% endfor %}
