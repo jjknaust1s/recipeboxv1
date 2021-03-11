@@ -49,9 +49,11 @@ def recipe_detail(request, post_id):
 def author_detail(request, author_id):
     author_obj = Author.objects.get(id=author_id)
     recipes = Recipe.objects.filter(author=author_obj)
+    fav = author_obj.favorites.all()
     return render(request, 'author_detail.html', {
         'author': author_obj,
-        'recipes': recipes
+        'recipes': recipes,
+        'fav': fav
         })
 
 
@@ -113,3 +115,33 @@ def signup_view(request):
 
     form = SignupForm()
     return render(request, 'generic_form.html', {'form': form})
+
+
+@login_required
+def edit_view(request, recipe_id):
+    editable_recipe = Recipe.objects.get(id=recipe_id)
+
+    if request.method == 'POST':
+        form = AddRecipeForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            editable_recipe.title=data.get('title')
+            editable_recipe.description=data.get('description')
+            editable_recipe.instructions=data.get('instructions')
+            editable_recipe.save()
+            return HttpResponseRedirect(reverse('homepage'))
+    form = AddRecipeForm(initial={'title': editable_recipe.title, 'description': editable_recipe.description, 'instructions': editable_recipe.instructions})
+    return render(
+        request,
+        'generic_form.html',
+        {'form': form}
+    )
+
+
+def favorite_view(request, recipe_id):
+    user = Author.objects.get(user=request.user)
+    fav_recipe = Recipe.objects.get(id=recipe_id)
+    user.favorites.add(fav_recipe)
+    user.save()
+    print(user.favorites.all())
+    return HttpResponseRedirect(reverse('homepage'))
